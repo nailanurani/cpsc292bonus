@@ -73,6 +73,7 @@ singaporemap <- ggplot(country_df) +
 library(patchwork)
 fullmap + inset_element(singaporemap, 0.1, 0, 1.6, 0.4) + plot_layout(guides = "collect")
 ##ggsave("../results/map.pdf", last_plot(), width = 9, height = 6)
+## create results folder and uncomment code to save visual
                
 ```
 
@@ -100,7 +101,9 @@ amount.type.df <- data.frame("Transaction" = transaction_types,
 ggplot(amount.type.df, aes(x=Transaction, y= Amount, fill = Transaction)) + geom_boxplot(varwidth = T) + 
   labs(x = "Transaction type", y = "Amount of money (USD)", title = "Amount of Money by Transaction Type") + theme_bw() + theme(legend.position = "none") + stat_summary(fun=mean, color="black",shape=18) 
 
+
 ##ggsave("../results/boxplot.pdf", last_plot())
+## create results folder and uncomment code to save visual
 
 ```
 
