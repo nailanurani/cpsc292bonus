@@ -1,1 +1,1 @@
-practice repository foe cpsc292
+practice repository for cpsc292
