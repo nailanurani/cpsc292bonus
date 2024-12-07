@@ -1,0 +1,109 @@
+---
+title: "Project 2 code"
+output: html_notebook
+---
+
+
+## Project 2
+
+```{r setup, include=FALSE}
+library(readr)
+library(maps)
+library(ggplot2)
+Black_Money <- readr::read_csv("CopyOfDataset.csv")
+force(Black_Money)
+anyNA(Black_Money)
+
+
+```
+
+### Data Source:
+
+Ali, W. (2024). Global Black Money Transactions Dataset [Dataset]. Kaggle. https://www.kaggle.com/datasets/waqi786/global-black-money-transactions-dataset
+
+### Graphic 1
+
+```{r, include=TRUE}
+                                              
+country_risk_score <- function(x){
+   Black_Money$`Money Laundering Risk Score`[Black_Money$Country == x]
+}
+
+x <- c("Brazil","USA","Russia","China","Switzerland","India","UAE","UK","South Africa","Singapore")
+
+
+all_country_RS <- lapply(x,country_risk_score)
+
+
+means <- lapply(all_country_RS, mean)
+
+
+countries <- c("Brazil","USA","Russia","China","Switzerland","India","United Arab Emirates","UK","South Africa","Singapore")
+
+country_df <- data.frame("countries" = countries, "means" = unlist(means))
+
+world_map <- map_data(map = "world")
+
+#########
+
+fullmap <- ggplot(country_df) +
+  geom_map(aes(map_id = countries, fill = means), map = world_map) +
+  geom_polygon(data = world_map, aes(x = long, y = lat, group = group), 
+               colour = 'black', fill =NA)+
+  ggtitle("Mean Risk Score by Country") +
+  scale_fill_distiller(name = "Mean Risk Score", palette = "YlOrRd", direction = 1) + theme_bw()
+
+#########
+
+singaporemap <- ggplot(country_df) +
+  geom_map(aes(map_id = countries, fill = means), map = world_map) +
+  geom_polygon(data = world_map, aes(x = long, y = lat, group = group), 
+               colour = 'black', fill =NA) + 
+  scale_fill_distiller(name = "Mean Risk Score", palette = "YlOrRd", direction = 1) + 
+  theme_bw() + coord_sf(xlim = c(102, 105), ylim = c(3, 0), expand = FALSE) + 
+  theme(axis.text.x=element_blank(), 
+      axis.ticks.x=element_blank(), 
+      axis.text.y=element_blank(), 
+      axis.ticks.y=element_blank()) +
+  ggtitle("Singapore")
+```
+
+```{r, fig.height=6, fig.width=9}
+
+library(patchwork)
+fullmap + inset_element(singaporemap, 0.1, 0, 1.6, 0.4) + plot_layout(guides = "collect")
+##ggsave("../results/map.pdf", last_plot(), width = 9, height = 6)
+               
+```
+
+
+
+## Graphic 2
+
+```{r, include=TRUE}
+
+types <- c("Offshore Transfer", "Property Purchase", "Stocks Transfer","Cryptocurrency","Cash Withdrawal")
+
+type_amounts <- function(x){Black_Money$`Amount (USD)`[Black_Money$`Transaction Type` == x]
+}
+
+Black_Money$`Amount (USD)`[Black_Money$`Transaction Type` == x]
+
+amount_per_type <- lapply(types, type_amounts)
+
+
+transaction_types <- c("Offshore", "Property ", "Stocks ","Crypto","Cash")
+
+amount.type.df <- data.frame("Transaction" = transaction_types,
+                 "Amount" = unlist(amount_per_type))
+
+ggplot(amount.type.df, aes(x=Transaction, y= Amount, fill = Transaction)) + geom_boxplot(varwidth = T) + 
+  labs(x = "Transaction type", y = "Amount of money (USD)", title = "Amount of Money by Transaction Type") + theme_bw() + theme(legend.position = "none") + stat_summary(fun=mean, color="black",shape=18) 
+
+##ggsave("../results/boxplot.pdf", last_plot())
+
+```
+
+
+
+
