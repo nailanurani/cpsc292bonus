@@ -13,7 +13,8 @@ library(ggplot2)
 Black_Money <- readr::read_csv("CopyOfDataset.csv")
 force(Black_Money)
 anyNA(Black_Money)
-
+### data set copy is in cpsc292bonus folder
+### change data set if running in Project2 folder
 
 ```
 
